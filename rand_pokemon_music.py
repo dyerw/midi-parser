@@ -7,6 +7,11 @@ hex_list = [val.encode('hex') for val in x]
 
 sound1 = hex(random.choice(range(127)))[2:]
 sound2 = hex(random.choice(range(127)))[2:]
+if len(sound1) == 1:
+    sound1 = "0" + sound1
+if len(sound2) == 1:
+    sound2 = "0" + sound2
+
 print sound1
 print sound2
 
