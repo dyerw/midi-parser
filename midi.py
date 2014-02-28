@@ -1,5 +1,5 @@
-from bitstring import BitArray, Bits
-from data.constants import CHUNK_ID_TO_CLASS
+from bitstring import BitArray, Bits, BitStream
+from chunk import HeaderChunk, TrackChunk
 import os
 
 
@@ -11,22 +11,35 @@ class Midi(object):
     """
     This class represents an entire midi file.
     """
+    # TODO: refactor to use bitstream
 
     def __init__(self, path):
-        self.bits = Bits(open(path, "r"))
-        self.chunks = self.chunkify(self.bits)
+        self.bit_stream = BitStream(open(path, "r"))
+        self.chunks = self.chunkify(self.bit_stream)
 
-    def chunkify(self, bits):
-        if len(bits) == 0:
-            return []
+    def chunkify(self, bit_stream, chunk_list=[]):
+        if bit_stream.pos == bit_stream.length:
+            return chunk_list
 
-        # number of bytes in the first chunk as number of bytes
-        first_chunk_size = bits[4*8:8*8].int
+        # First four bytes are the chunk id
+        chunk_id = bit_stream.read('bits:32')
+        # Next four bytes are the chunk size (in bytes)
+        chunk_size = bit_stream.read('bits:32')
+        # The rest of the chunk is chunk specific data
+        chunk_data = bit_stream.read('bits:%d' % (chunk_size.int*8))
 
-        # this is the total size of the first chunk including chunk id and size
-        split_ind = 8 + first_chunk_size
+        if chunk_id.bytes == 'MThd':
+            chunk_list.append(HeaderChunk(chunk_id, chunk_size, chunk_data))
+            return self.chunkify(bit_stream, chunk_list=chunk_list)
 
-        return [CHUNK_ID_TO_CLASS[bits[:4*8].bytes](bits[:split_ind*8])] + self.chunkify(bits[split_ind*8:])
+        elif chunk_id.bytes == 'MTrk':
+            chunk_list.append(TrackChunk(chunk_id, chunk_size, chunk_data))
+            return self.chunkify(bit_stream, chunk_list=chunk_list)
+        else:
+            raise ValueError('Didn\'t recognize chunk id: %s' % chunk_id.bytes)
+
+    def write(self, path):
+        pass
 
 
 # All the rest of this is just for testing stuff out
