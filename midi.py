@@ -1,4 +1,4 @@
-from bitstring import BitArray, Bits, BitStream
+from bitstring import BitStream
 from chunk import HeaderChunk, TrackChunk
 import os
 
@@ -11,7 +11,6 @@ class Midi(object):
     """
     This class represents an entire midi file.
     """
-    # TODO: refactor to use bitstream
 
     def __init__(self, path):
         self.bit_stream = BitStream(open(path, "r"))
