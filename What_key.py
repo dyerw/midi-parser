@@ -5,7 +5,7 @@ import os
 #open the midi file
 x = open(os.path.join('test_midis', 'pokemon-center.mid')).read()
 
-#encode each askii value in midi file to its hex equivilent
+#encode each ascii value in midi file to its hex equivilent
 hex_list = [val.encode('hex') for val in x]
 
 #if user did not specify instruments to be assigned, assign a random one to each
@@ -36,8 +36,8 @@ print "ended"
 # the chord progression
 #from the midi file
 
-#we must now decode our hex back into askii so it can be written to the .mid properly
+#we must now decode our hex back into ascii so it can be written to the .mid properly
 output = reduce((lambda a, b: a + b), [val.decode('hex') for val in hex_list])
 
-#open the file location 'output.mid' and write the askii back to the file
+#open the file location 'output.mid' and write the ascii back to the file
 open('output.mid', 'w').write(output)
