@@ -4,7 +4,7 @@ import os
 
 
 # Path we're going to use while we're messing around
-TMP_PATH = os.path.join('test_midis', 'pokemon-center.mid')
+TMP_PATH = os.path.join('test_midis', 'bonnie_tyler-total_eclipse_of_the_heart.mid')
 
 
 class Midi(object):
