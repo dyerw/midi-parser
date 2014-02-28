@@ -1,4 +1,5 @@
 from bitstring import BitArray, Bits
+from data.constants import CHUNK_ID_TO_CLASS
 import os
 
 
@@ -25,23 +26,12 @@ class Midi(object):
         # this is the total size of the first chunk including chunk id and size
         split_ind = 8 + first_chunk_size
 
-        return [Chunk(bits[:split_ind*8])] + self.chunkify(bits[split_ind*8:])
-
-
-class Chunk():
-    """
-    This class represents a chunk of any sort found in a midi file.
-    """
-
-    def __init__(self, bits):
-        self.id = bits[:4*8]
-        self.size = bits[4*8:8*8]
-        self.data = bits[8*8:]
+        return [CHUNK_ID_TO_CLASS[bits[:4*8].bytes](bits[:split_ind*8])] + self.chunkify(bits[split_ind*8:])
 
 
 # All the rest of this is just for testing stuff out
 midi = Midi(TMP_PATH)
 
 for chunk in midi.chunks:
-    print chunk.id.bytes
+    print chunk
 
