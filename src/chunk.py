@@ -1,4 +1,4 @@
-from bitstring import Bits
+from bitstring import BitStream
 
 
 class Chunk(object):
@@ -18,10 +18,16 @@ class Chunk(object):
 class HeaderChunk(Chunk):
     def __init__(self, chunk_id, size, data):
         super(HeaderChunk, self).__init__(chunk_id, size, data)
+        data_stream = BitStream(self.data)
 
-        self.format_type = self.data[:2*8]
-        self.num_of_tracks = self.data[2*8:4*8]
-        self.time_division = self.data[4*8:]
+        # First two bytes are the format type
+        self.format_type = data_stream.read('bits:16')
+
+        # Second two bytes are the number of tracks
+        self.num_of_tracks = data_stream.read('bits:16')
+
+        # Third two bytes are the time division
+        self.time_division = data_stream.read('bits:16')
 
     def __repr__(self):
         return "%(super_repr)s %(format)d %(num_tracks)d %(time_div)d" % \
@@ -38,4 +44,4 @@ class TrackChunk(Chunk):
         self.events = self.eventify(self.data)
 
     def eventify(self, chunk_data):
-        return []
+        pass
