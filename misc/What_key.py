@@ -3,7 +3,7 @@ import random
 
 
 #open the midi file
-x = open(os.path.join('test_midis', 'pokemon-center.mid')).read()
+x = open(os.path.join('../test_midis', 'pokemon-center.mid')).read()
 
 #encode each ascii value in midi file to its hex equivilent
 hex_list = [val.encode('hex') for val in x]
@@ -40,4 +40,4 @@ print "ended"
 output = reduce((lambda a, b: a + b), [val.decode('hex') for val in hex_list])
 
 #open the file location 'output.mid' and write the ascii back to the file
-open('output.mid', 'w').write(output)
+open('../output.mid', 'w').write(output)
