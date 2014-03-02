@@ -1,4 +1,5 @@
 from bitstring import BitStream
+from utils.bit_utils import read_variable_byte_data
 
 
 class Chunk(object):
@@ -41,7 +42,14 @@ class TrackChunk(Chunk):
     def __init__(self, chunk_id, size, data):
         super(TrackChunk, self).__init__(chunk_id, size, data)
 
-        self.events = self.eventify(self.data)
+        self.events = self.eventify()
 
-    def eventify(self, chunk_data):
-        pass
+    def eventify(self):
+        # TODO: figure out how to figure out length of data for diff event types
+
+        # Each event starts with a variable byte delta time
+        # delta_time = read_variable_byte_data(self.data)
+        #
+        # event_type = self.data.read('bits:8')
+
+        return []
