@@ -24,13 +24,15 @@ class MidiChannelEvent(Event):
 class MetaEvent(Event):
     def __init__(self, delta_time, event_type_value, event_data):
         super(MetaEvent, self).__init__(delta_time, event_type_value, event_data)
-        data_bit_stream = BitStream(self.event_data)
 
-        self.meta_event_type = data_bit_stream.read('bits:8')
+        self.meta_event_type = self.event_data.read('bits:8')
+        print "MET" + self.meta_event_type.bin
 
-        self.data_length = read_variable_byte_data(data_bit_stream)
+        #self.data_length = read_variable_byte_data(data_bit_stream)
+        self.data_length = self.event_data.read('bits:8')
 
-        self.data = data_bit_stream.read('bits:%d' % (8*self.data_length.int))
+        print self.data_length
+        self.data = self.event_data.read('bits:%d' % (8*self.data_length.int))
 
 
 class SystemExclusiveEvent(Event):

@@ -1,5 +1,6 @@
 from bitstring import BitStream
 from utils.bit_utils import read_variable_byte_data
+from event import MetaEvent, MidiChannelEvent, SystemExclusiveEvent
 
 
 class Chunk(object):
@@ -44,12 +45,34 @@ class TrackChunk(Chunk):
 
         self.events = self.eventify()
 
-    def eventify(self):
-        # TODO: figure out how to figure out length of data for diff event types
+    def eventify(self, events=[]):
+        print "eventify!"
+        if self.data.pos == self.data.len:
+            print "done!"
+            return events
 
         # Each event starts with a variable byte delta time
-        # delta_time = read_variable_byte_data(self.data)
-        #
-        # event_type = self.data.read('bits:8')
+        delta_time = read_variable_byte_data(self.data)
 
-        return []
+        event_type = self.data.read('bits:8')
+
+        # 0x8 to 0xE are Midi Channel Events
+        if event_type.hex in ['8', '9', 'a', 'b', 'c', 'd', 'e']:
+            print "chan event"
+            events.append(MidiChannelEvent(delta_time, event_type, self.data))
+            return self.eventify(events=events)
+
+        # 0xFF are Meta Events
+        elif event_type.hex == 'ff':
+            print "meta event"
+            events.append(MetaEvent(delta_time, event_type, self.data))
+            return self.eventify(events=events)
+
+        # 0xF0 and 0xF7 are System Exclusive Events
+        elif event_type.hex in ['f0', 'f7']:
+            print "sysex event"
+            events.append(MidiChannelEvent(delta_time, event_type, self.data))
+            return self.eventify(events=events)
+
+        else:
+            raise ValueError('%s is not a valid event type' % event_type.hex)
