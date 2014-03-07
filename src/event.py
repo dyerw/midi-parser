@@ -8,6 +8,9 @@ class Event(object):
         self.event_type_value = event_type_value
         self.event_data = event_data
 
+    def __repr__(self):
+        return self.event_type_value.hex
+
 
 class MidiChannelEvent(Event):
     def __init__(self, delta_time, event_type_value, event_data):

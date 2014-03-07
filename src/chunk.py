@@ -46,35 +46,36 @@ class TrackChunk(Chunk):
         self.events = self.eventify()
 
     def eventify(self, events=[]):
-        print "eventify!"
-        print len(events)
-        if self.data.pos == self.data.len:
-            print "done!"
-            return events
+        # if self.data.pos == self.data.len:
+        #     print "done!"
+        #     return events
 
-        # Each event starts with a variable byte delta time
-        delta_time = read_variable_byte_data(self.data)
+        while self.data.pos != self.data.len:
+            print "eventify!"
+            print len(events)
 
-        event_type = self.data.read('bits:8')
+            # Each event starts with a variable byte delta time
+            delta_time = read_variable_byte_data(self.data)
 
-        # 0x80 to 0xEF are Midi Channel Events
-        # Decimal: 128 - 239
-        if event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
-            print "chan event"
-            events.append(MidiChannelEvent(delta_time, event_type, self.data))
-            return self.eventify(events=events)
+            event_type = self.data.read('bits:8')
 
-        # 0xFF are Meta Events
-        elif event_type.hex == 'ff':
-            print "meta event"
-            events.append(MetaEvent(delta_time, event_type, self.data))
-            return self.eventify(events=events)
+            # 0x80 to 0xEF are Midi Channel Events
+            # Decimal: 128 - 239
+            if event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
+                print "chan event"
+                events.append(MidiChannelEvent(delta_time, event_type, self.data))
 
-        # 0xF0 and 0xF7 are System Exclusive Events
-        elif event_type.hex in ['f0', 'f7']:
-            print "sysex event"
-            events.append(MidiChannelEvent(delta_time, event_type, self.data))
-            return self.eventify(events=events)
+            # 0xFF are Meta Events
+            elif event_type.hex == 'ff':
+                print "meta event"
+                events.append(MetaEvent(delta_time, event_type, self.data))
 
-        else:
-            raise ValueError('%s is not a valid event type' % event_type.hex)
+            # 0xF0 and 0xF7 are System Exclusive Events
+            elif event_type.hex in ['f0', 'f7']:
+                print "sysex event"
+                events.append(MidiChannelEvent(delta_time, event_type, self.data))
+
+            else:
+                raise ValueError('%s is not a valid event type' % event_type.hex)
+
+        return events
