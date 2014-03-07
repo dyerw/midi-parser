@@ -59,5 +59,6 @@ midi = Midi(TMP_PATH)
 for chunk in midi.chunks:
     print chunk
     if chunk.chunk_id.bytes == 'MTrk':
-        print [chunk.events[i] for i in range(50)]
+        print len(chunk.events)
+        print [chunk.events[i] for i in range(len(chunk.events[:50]))]
 

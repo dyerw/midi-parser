@@ -45,12 +45,14 @@ class TrackChunk(Chunk):
 
         self.events = self.eventify()
 
-    def eventify(self, events=[]):
+    def eventify(self):
+        events = []
         # if self.data.pos == self.data.len:
         #     print "done!"
         #     return events
 
-        while self.data.pos != self.data.len:
+        while self.data.pos < self.data.len:
+            # print '!!!', self.data.pos, self.data.len
             print "eventify!"
             print len(events)
 
