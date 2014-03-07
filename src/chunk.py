@@ -47,6 +47,7 @@ class TrackChunk(Chunk):
 
     def eventify(self, events=[]):
         print "eventify!"
+        print len(events)
         if self.data.pos == self.data.len:
             print "done!"
             return events
@@ -56,8 +57,9 @@ class TrackChunk(Chunk):
 
         event_type = self.data.read('bits:8')
 
-        # 0x8 to 0xE are Midi Channel Events
-        if event_type.hex in ['8', '9', 'a', 'b', 'c', 'd', 'e']:
+        # 0x80 to 0xEF are Midi Channel Events
+        # Decimal: 128 - 239
+        if event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
             print "chan event"
             events.append(MidiChannelEvent(delta_time, event_type, self.data))
             return self.eventify(events=events)
