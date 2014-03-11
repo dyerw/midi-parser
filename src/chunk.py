@@ -51,6 +51,8 @@ class TrackChunk(Chunk):
         #     print "done!"
         #     return events
 
+        last_event = None
+
         while self.data.pos < self.data.len:
             print "eventify!"
             print len(events)
@@ -62,10 +64,26 @@ class TrackChunk(Chunk):
 
             print event_type.hex
 
+            # 0x00 to 0x7F are a continuation of the last event and are
+            # actually data bytes
+            if event_type.hex in [hex(i)[2:] for i in range(0, 128)]:
+                print "continuation event"
+                # print self.data
+                # print self.data.pos
+                # print self.data.read('bits:8')
+                # print self.data.pos
+                # print self.data.pos
+                self.data.pos -= 8
+                # print self.data.pos
+                # print last_event
+                last_event.pos = 0
+                events.append(MidiChannelEvent(delta_time, last_event, self.data))
+
             # 0x80 to 0xEF are Midi Channel Events
             # Decimal: 128 - 239
-            if event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
+            elif event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
                 print "chan event"
+                last_event = BitStream(event_type)
                 events.append(MidiChannelEvent(delta_time, event_type, self.data))
 
             # 0xFF are Meta Events
