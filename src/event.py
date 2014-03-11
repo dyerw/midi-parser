@@ -47,5 +47,6 @@ class SystemExclusiveEvent(Event):
         super(SystemExclusiveEvent, self).__init__(delta_time, event_type_value, event_data)
 
         self.data_length = read_variable_byte_data(self.event_data)
+        print "SYSEX EVENT LENGTH: " + str(self.data_length.int)
 
         self.data = self.event_data.read('bits:%d' % (8*self.data_length.int))

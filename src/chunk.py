@@ -52,7 +52,6 @@ class TrackChunk(Chunk):
         #     return events
 
         while self.data.pos < self.data.len:
-            # print '!!!', self.data.pos, self.data.len
             print "eventify!"
             print len(events)
 
@@ -60,6 +59,8 @@ class TrackChunk(Chunk):
             delta_time = read_variable_byte_data(self.data)
 
             event_type = self.data.read('bits:8')
+
+            print event_type.hex
 
             # 0x80 to 0xEF are Midi Channel Events
             # Decimal: 128 - 239
@@ -75,7 +76,7 @@ class TrackChunk(Chunk):
             # 0xF0 and 0xF7 are System Exclusive Events
             elif event_type.hex in ['f0', 'f7']:
                 print "sysex event"
-                events.append(MidiChannelEvent(delta_time, event_type, self.data))
+                events.append(SystemExclusiveEvent(delta_time, event_type, self.data))
 
             else:
                 raise ValueError('%s is not a valid event type' % event_type.hex)

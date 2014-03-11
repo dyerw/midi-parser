@@ -5,7 +5,7 @@ from chunk import HeaderChunk, TrackChunk
 
 
 # Path we're going to use while we're messing around
-TMP_PATH = os.path.join('../test_midis', 'bonnie_tyler-total_eclipse_of_the_heart.mid')
+TMP_PATH = os.path.join('../test_midis', 'weezer-buddy_holly.mid')
 
 
 class Midi(object):
@@ -60,5 +60,5 @@ for chunk in midi.chunks:
     print chunk
     if chunk.chunk_id.bytes == 'MTrk':
         print len(chunk.events)
-        print [chunk.events[i] for i in range(len(chunk.events[:50]))]
+        print [chunk.events[i] for i in range(len(chunk.events[:100]))]
 
