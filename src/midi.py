@@ -5,7 +5,7 @@ from chunk import HeaderChunk, TrackChunk
 
 
 # Path we're going to use while we're messing around
-TMP_PATH = os.path.join('../test_midis', 'weezer-buddy_holly.mid')
+TMP_PATH = os.path.join('..\\test_midis', 'michael_jackson-billie_jean.mid')
 
 
 class Midi(object):
