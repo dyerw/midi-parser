@@ -10,7 +10,7 @@ TMP_PATH = os.path.join('..\\test_midis', 'michael_jackson-billie_jean.mid')
 
 class Midi(object):
     """
-    This class represents an entire midi file.
+    This class represents an entire midi file, comprising of a list of :class:`Chunk`s.
     """
 
     def __init__(self, path):
@@ -19,7 +19,11 @@ class Midi(object):
 
     def chunkify(self, bit_stream, chunk_list=[]):
         """
-        Turns a bit stream into a list of midi chunks.
+        Takes a bit_stream representing the data for a midi file and parses it
+        into a list of :class:`Chunk` objects.
+
+        :param BitStream bit_stream: The BitStream taken from the data of the midi file.
+        :returns list: A list of :class:`Chunk` representing the data chunks in the midi file.
         """
 
         # If this is the end of the bitstream return the chunk list
@@ -50,15 +54,19 @@ class Midi(object):
             raise ValueError('Didn\'t recognize chunk id: %s' % chunk_id.bytes)
 
     def write(self, path):
-        pass
+        with open(path, 'w') as f:
+            for chunk in self.chunks:
+                f.write(chunk.get_bytes())
 
 
 # All the rest of this is just for testing stuff out
 midi = Midi(TMP_PATH)
 
-for chunk in midi.chunks:
-    print chunk
-    if chunk.chunk_id.bytes == 'MTrk':
-        print len(chunk.events)
-        print [chunk.events[i] for i in range(len(chunk.events[:100]))]
+midi.write('billie_jean_out.mid')
+
+# for chunk in midi.chunks:
+#     print chunk
+#     if chunk.chunk_id.bytes == 'MTrk':
+#         print len(chunk.events)
+#         print [chunk.events[i] for i in range(len(chunk.events[:100]))]
 
