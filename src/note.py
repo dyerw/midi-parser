@@ -11,8 +11,9 @@ class Note(object):
 
     #a note has pitch, rhythmic value (quarternote etc) and place in measure
 
-    def __init__(self, pitch, rhythmicvalue, beat):
-        self.pitch = pitch
-        self.rhythmicvalue = rhythmicvalue
-        self.beat = beat
+    def __init__(self, pitchdata, time_between_on_and_off):
+
+        self.pitch = pitchdata
+        self.rhythmicvalue = time_between_on_and_off
+        
 
