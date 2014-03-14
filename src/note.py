@@ -16,5 +16,3 @@ class Note(object):
         self.rhythmicvalue = rhythmicvalue
         self.beat = beat
 
-    def __repr__(self):
-        return self.chunk_id.bytes + ' ' + str(self.size.int)
