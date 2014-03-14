@@ -50,26 +50,19 @@ class TrackChunk(Chunk):
 
     def eventify(self):
         events = []
-        # if self.data.pos == self.data.len:
-        #     print "done!"
-        #     return events
 
         last_event = None
 
         while self.data.pos < self.data.len:
-            print "eventify!"
-            print len(events)
 
             # Each event starts with a variable byte delta time
             delta_time = read_variable_byte_data(self.data)
 
             event_type = self.data.read('bits:8')
 
-            print event_type.hex
-
             # 0x00 to 0x7F are a continuation of the last event and are
             # actually data bytes
-            if event_type.hex in [hex(i)[2:] for i in range(0, 128)]:
+            if event_type.hex in [hex(i)[2:] for i in range(0, 128)] and last_event is not None:
                 self.data.pos -= 8
                 last_event.pos = 0
                 events.append(MidiChannelEvent(delta_time, last_event, self.data))

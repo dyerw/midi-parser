@@ -21,9 +21,6 @@ class MidiChannelEvent(Event):
 
         self.midi_channel = event_type_value.read('bits:4')
 
-        print self.channel_event_type.hex
-        print self.midi_channel.hex
-
         self.parameter_1 = self.event_data.read('bits:8')
 
         if self.channel_event_type.hex not in ['c', 'd']:
@@ -47,6 +44,5 @@ class SystemExclusiveEvent(Event):
         super(SystemExclusiveEvent, self).__init__(delta_time, event_type_value, event_data)
 
         self.data_length = read_variable_byte_data(self.event_data)
-        print "SYSEX EVENT LENGTH: " + str(self.data_length.int)
 
         self.data = self.event_data.read('bits:%d' % (8*self.data_length.int))

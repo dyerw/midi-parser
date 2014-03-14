@@ -1,11 +1,12 @@
 import os
-from bitstring import BitStream
+from bitstring import BitStream, BitArray
 from chunk import HeaderChunk, TrackChunk
 
 
 
 # Path we're going to use while we're messing around
-TMP_PATH = os.path.join('..\\test_midis', 'michael_jackson-billie_jean.mid')
+#TMP_PATH = os.path.join('..\\test_midis', 'michael_jackson-billie_jean.mid')
+TMP_PATH = 'billie_jean_out.mid'
 
 
 class Midi(object):
@@ -62,7 +63,17 @@ class Midi(object):
 # All the rest of this is just for testing stuff out
 midi = Midi(TMP_PATH)
 
-midi.write('billie_jean_out.mid')
+# OUT_FILE = 'billie_jean_out.mid'
+# midi.write(OUT_FILE)
+#
+# # show diff with original file
+# f1 = BitArray(open(TMP_PATH)).bytes
+# f2 = BitArray(open(OUT_FILE)).bytes
+#
+# print "checking diff.."
+# for i, nib in enumerate(f1):
+#     if nib != f2[i]:
+#         print i, nib, f2[i]
 
 # for chunk in midi.chunks:
 #     print chunk
