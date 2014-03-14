@@ -30,6 +30,7 @@ class MidiChannelEvent(Event):
             self.parameter_2 = self.event_data.read('bits:8')
 
 
+
 class MetaEvent(Event):
     def __init__(self, delta_time, event_type_value, event_data):
         super(MetaEvent, self).__init__(delta_time, event_type_value, event_data)
