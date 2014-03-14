@@ -15,5 +15,5 @@ class Note(object):
 
         self.pitch = pitchdata
         self.rhythmicvalue = time_between_on_and_off
-        
+
 

@@ -1,6 +1,7 @@
 import os
 from bitstring import BitStream
 from chunk import HeaderChunk, TrackChunk
+from note import note
 
 
 
@@ -61,4 +62,8 @@ for chunk in midi.chunks:
     if chunk.chunk_id.bytes == 'MTrk':
         print len(chunk.events)
         print [chunk.events[i] for i in range(len(chunk.events[:100]))]
+
+
+        #__TODO__  instead of printing out all the track events as ints, create note objects for each,
+        # printing out note.pitch
 
