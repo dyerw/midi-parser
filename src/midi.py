@@ -10,7 +10,9 @@ class Midi(object):
 
     def __init__(self, path):
         self.bit_stream = BitStream(open(path, "r"))
-        self.chunks = self.chunkify(self.bit_stream)
+        chunks = self.chunkify(self.bit_stream)
+        self.header = chunks[0]
+        self.tracks = chunks[1:]
 
     def chunkify(self, bit_stream, chunk_list=[]):
         """

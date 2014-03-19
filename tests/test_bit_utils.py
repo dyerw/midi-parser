@@ -1,6 +1,8 @@
 import unittest
+
 from bitstring import BitStream
-from utils.bit_utils import read_variable_byte_data
+
+from src.utils.bit_utils import read_variable_byte_data
 
 
 class TestBitUtils(unittest.TestCase):

@@ -1,38 +1,43 @@
-from bitstring import BitStream
-from utils.bit_utils import read_variable_byte_data
-from event import MetaEvent, MidiChannelEvent, SystemExclusiveEvent
+from bitstring import BitStream, Bits
+
+from src.utils.chunk_utils import eventify
 
 
 class Chunk(object):
     """
     This class represents a chunk of any sort found in a midi file.
+    :class:`HeaderChunk` and :class:`TrackChunk` inherit from this class, it
+    is never initialized directly.
     """
 
-    def __init__(self, chunk_id, size, data):
-        self.chunk_id = chunk_id
-        self.size = size
-        self.data = data
+    def __init__(self, chunk_id, size):
+        self.chunk_id = chunk_id.bytes
+        self.chunk_size = size.int
 
     def __repr__(self):
-        return self.chunk_id.bytes + ' ' + str(self.size.int)
+        return self.chunk_id
 
     def get_bytes(self):
-        return self.chunk_id.bytes + self.size.bytes + self.data.bytes
+        pass
 
 
 class HeaderChunk(Chunk):
+    """
+    Represents the header chunk of a midi file. Each midi object only has one
+    header chunk. The header chunk contains information that pertains to the track as a whole.
+    """
     def __init__(self, chunk_id, size, data):
-        super(HeaderChunk, self).__init__(chunk_id, size, data)
-        data_stream = BitStream(self.data)
+        super(HeaderChunk, self).__init__(chunk_id, size)
+        data_stream = BitStream(data)
 
         # First two bytes are the format type
-        self.format_type = data_stream.read('bits:16')
+        self.format_type = data_stream.read('bits:16').int
 
         # Second two bytes are the number of tracks
-        self.num_of_tracks = data_stream.read('bits:16')
+        self.num_of_tracks = data_stream.read('bits:16').int
 
         # Third two bytes are the time division
-        self.time_division = data_stream.read('bits:16')
+        self.time_division = Bits(data_stream.read('bits:16'))
 
     def __repr__(self):
         return "%(super_repr)s %(format)d %(num_tracks)d %(time_div)d" % \
@@ -44,44 +49,6 @@ class HeaderChunk(Chunk):
 
 class TrackChunk(Chunk):
     def __init__(self, chunk_id, size, data):
-        super(TrackChunk, self).__init__(chunk_id, size, data)
+        super(TrackChunk, self).__init__(chunk_id, size)
 
-        self.events = self.eventify()
-
-    def eventify(self):
-        events = []
-
-        last_event = None
-
-        while self.data.pos < self.data.len:
-
-            # Each event starts with a variable byte delta time
-            delta_time = read_variable_byte_data(self.data)
-
-            event_type = self.data.read('bits:8')
-
-            # 0x00 to 0x7F are a continuation of the last event and are
-            # actually data bytes
-            if event_type.hex in [hex(i)[2:] for i in range(0, 128)] and last_event is not None:
-                self.data.pos -= 8
-                last_event.pos = 0
-                events.append(MidiChannelEvent(delta_time, last_event, self.data))
-
-            # 0x80 to 0xEF are Midi Channel Events
-            # Decimal: 128 - 239
-            elif event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
-                last_event = event_type
-                events.append(MidiChannelEvent(delta_time, event_type, self.data))
-
-            # 0xFF are Meta Events
-            elif event_type.hex == 'ff':
-                events.append(MetaEvent(delta_time, event_type, self.data))
-
-            # 0xF0 and 0xF7 are System Exclusive Events
-            elif event_type.hex in ['f0', 'f7']:
-                events.append(SystemExclusiveEvent(delta_time, event_type, self.data))
-
-            else:
-                raise ValueError('%s is not a valid event type' % event_type.hex)
-
-        return events
+        self.events = eventify(data)
