@@ -63,7 +63,13 @@ for chunk in midi.chunks:
         print len(chunk.events)
         print [chunk.events[i] for i in range(len(chunk.events[:100]))]
 
+        for event in track_events
+
 
         #__TODO__  instead of printing out all the track events as ints, create note objects for each,
-        # printing out note.pitch
+        # printing out note.pitch:
+
+
+
+
 
