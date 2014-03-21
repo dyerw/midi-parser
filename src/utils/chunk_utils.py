@@ -1,5 +1,14 @@
 from src.event import MidiChannelEvent, SystemExclusiveEvent, MetaEvent
 from bit_utils import read_variable_byte_data
+from src.event_types.midi_channel_event_types import *
+
+CHANNEL_EVENT_LOOKUP = {'8': NoteOffEvent,
+                        '9': NoteOnEvent,
+                        'a': NoteAftertouchEvent,
+                        'b': ControllerEvent,
+                        'c': ProgramChangeEvent,
+                        'd': ChannelAftertouchEvent,
+                        'e': PitchBendEvent}
 
 
 def eventify(data):
@@ -19,13 +28,13 @@ def eventify(data):
             if event_type.hex in [hex(i)[2:] for i in range(0, 128)] and last_event is not None:
                 data.pos -= 8
                 last_event.pos = 0
-                events.append(MidiChannelEvent(delta_time, last_event, data))
+                events.append(get_midi_channel_event(delta_time, last_event, data))
 
             # 0x80 to 0xEF are Midi Channel Events
             # Decimal: 128 - 239
             elif event_type.hex in [hex(i)[2:] for i in range(128, 240)]:
                 last_event = event_type
-                events.append(MidiChannelEvent(delta_time, event_type, data))
+                events.append(get_midi_channel_event(delta_time, event_type, data))
 
             # 0xFF are Meta Events
             elif event_type.hex == 'ff':
@@ -39,3 +48,13 @@ def eventify(data):
                 raise ValueError('%s is not a valid event type' % event_type.hex)
 
         return events
+
+
+def get_midi_channel_event(delta_time, event_type, data):
+
+    channel_event_type = event_type.read('bits:4')
+    midi_channel = event_type.read('bits:4')
+
+    #channel_event_class = CHANNEL_EVENT_LOOKUP[channel_event_type.hex]
+
+    return MidiChannelEvent(delta_time, channel_event_type, midi_channel, data)

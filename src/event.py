@@ -11,17 +11,18 @@ class Event(object):
 
 
 class MidiChannelEvent(Event):
-    def __init__(self, delta_time, event_type_value, event_data):
-        super(MidiChannelEvent, self).__init__(delta_time, event_type_value)
+    def __init__(self, delta_time, channel_event_type, midi_channel, event_data):
+        super(MidiChannelEvent, self).__init__(delta_time,
+                                               channel_event_type + midi_channel)
 
-        self.channel_event_type = event_type_value.read('bits:4')
+        self.channel_event_type = channel_event_type
 
-        self.midi_channel = event_type_value.read('bits:4')
+        self.midi_channel = midi_channel
 
-        self.parameter_1 = event_data.read('bits:8')
+        self._parameter_1 = event_data.read('bits:8')
 
         if self.channel_event_type.hex not in ['c', 'd']:
-            self.parameter_2 = event_data.read('bits:8')
+            self._parameter_2 = event_data.read('bits:8')
 
 
 class MetaEvent(Event):

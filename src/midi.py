@@ -51,9 +51,7 @@ class Midi(object):
             raise ValueError('Didn\'t recognize chunk id: %s' % chunk_id.bytes)
 
     def write(self, path):
-        with open(path, 'w') as f:
-            for chunk in self.chunks:
-                f.write(chunk.get_bytes())
+        pass
 
 
 
