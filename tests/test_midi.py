@@ -18,12 +18,9 @@ class TestMidi(unittest.TestCase):
         print midi.header.chunk_size
         print midi.header.time_division
 
-        for i in range(10):
-            event = midi.tracks[0].events[i]
+        for e in midi.tracks[2].events:
 
-            print "-----"
-            print event.delta_time
-            print event.event_type_value
+            print type(e)
 
         # midi.write(output_path)
         #

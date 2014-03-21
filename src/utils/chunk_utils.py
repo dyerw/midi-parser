@@ -11,6 +11,11 @@ CHANNEL_EVENT_LOOKUP = {'8': NoteOffEvent,
                         'e': PitchBendEvent}
 
 
+META_EVENT_LOOKUP = {'0': SequenceNumberEvent,
+                     '1': TextEvent,
+                     '2': CopyrightNoticeEvent}
+
+
 def eventify(data):
         events = []
 
@@ -55,6 +60,19 @@ def get_midi_channel_event(delta_time, event_type, data):
     channel_event_type = event_type.read('bits:4')
     midi_channel = event_type.read('bits:4')
 
-    #channel_event_class = CHANNEL_EVENT_LOOKUP[channel_event_type.hex]
+    channel_event_class = CHANNEL_EVENT_LOOKUP[channel_event_type.hex]
 
-    return MidiChannelEvent(delta_time, channel_event_type, midi_channel, data)
+    return channel_event_class(delta_time, channel_event_type,
+                               midi_channel, data)
+
+
+def get_meta_channel_event(delta_time, event_type, data):
+
+    meta_event_type = data.read('bits:8')
+
+    meta_event_class = META_EVENT_LOOKUP[meta_event_type.hex]
+
+    return meta_event_class(delta_time, event_type, meta_event_type, data)
+
+
+

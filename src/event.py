@@ -26,12 +26,11 @@ class MidiChannelEvent(Event):
 
 
 class MetaEvent(Event):
-    def __init__(self, delta_time, event_type_value, event_data):
-        super(MetaEvent, self).__init__(delta_time, event_type_value, )
+    def __init__(self, delta_time, event_type_value, meta_event_type, event_data):
+        super(MetaEvent, self).__init__(delta_time, event_type_value)
 
-        self.meta_event_type = event_data.read('bits:8')
+        self.meta_event_type = meta_event_type
 
-        #self.data_length = read_variable_byte_data(data_bit_stream)
         self.data_length = event_data.read('bits:8')
 
         self.data = event_data.read('bits:%d' % (8*self.data_length.int))
