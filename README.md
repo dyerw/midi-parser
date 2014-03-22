@@ -1,10 +1,8 @@
-midi-parser
-===========
-
-Very much a WIP.
+Orchestrate (WIP)
+=================
 
 Parses midi files into a data representation that can be understood and interacted with by humans and
-programs.
+programs. 
 
 References:
 
